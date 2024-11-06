@@ -9,6 +9,7 @@ interface MetaTags {
   description: string;
   image: string;
   url: string;
+  additionalTags: string;
 }
 
 export default function UserProfilePage({ params }: { params: { userId: string } }) {
@@ -32,7 +33,8 @@ export default function UserProfilePage({ params }: { params: { userId: string }
           title: doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || '',
           description: doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || '',
           image: doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '',
-          url: doc.querySelector('meta[property="og:url"]')?.getAttribute('content') || ''
+          url: doc.querySelector('meta[property="og:url"]')?.getAttribute('content') || '',
+          additionalTags: doc.querySelector('meta[property="og:additionalTags"]')?.getAttribute('content') || ''
         };
 
         // Add meta tags to document head
@@ -41,7 +43,7 @@ export default function UserProfilePage({ params }: { params: { userId: string }
         updateMetaTag('og:description', metaTags.description);
         updateMetaTag('og:image', metaTags.image);
         updateMetaTag('og:url', metaTags.url);
-        
+        updateMetaTag('og:additionalTags', metaTags.additionalTags);
         // Delay redirect to allow crawlers to see meta tags
         setTimeout(() => {
           window.location.href = `https://www.roblox.com/users/${params.userId}/profile`;
