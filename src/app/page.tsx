@@ -1,6 +1,5 @@
 'use client';
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { checkServerStatus } from "@/utils/api";
 
@@ -14,6 +13,7 @@ export default function Home() {
         setStatus(result);
       } catch (err) {
         setStatus('Error connecting to server');
+        console.error(err);
       }
     };
 
