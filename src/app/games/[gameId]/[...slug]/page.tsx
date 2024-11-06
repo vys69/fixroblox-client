@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
+import { parseMetaTags, updateMetaTags } from '@/utils/metaTags';
 
 export default function GamePage({ params }: { params: { gameId: string; slug: string[] } }) {
   const router = useRouter();
@@ -16,8 +17,12 @@ export default function GamePage({ params }: { params: { gameId: string; slug: s
         if (!response.ok) throw new Error('Failed to fetch game data');
         
         const html = await response.text();
-        // Extract redirect URL from meta tags if needed
-        window.location.href = `https://www.roblox.com/games/${params.gameId}`;
+        const metaTags = parseMetaTags(html);
+        updateMetaTags(metaTags);
+        
+        setTimeout(() => {
+          window.location.href = `https://www.roblox.com/games/${params.gameId}`;
+        }, 500);
       } catch (error) {
         toast({
           variant: "destructive",
