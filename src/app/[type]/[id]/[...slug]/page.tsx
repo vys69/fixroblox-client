@@ -1,17 +1,27 @@
- 'use client';
+'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
+import { parseMetaTags, updateMetaTags } from '@/utils/metaTags';
 
 const VALID_ROBLOX_PATHS = {
   'games': /^\d+$/,
   'game': /^\d+$/,
   'groups': /^\d+$/,
   'users': /^\d+$/,
-};
+} as const;
 
-export default function DynamicRoute({ params }: { params: { type: string; id: string; slug: string[] } }) {
+type Props = {
+  params: {
+    type: keyof typeof VALID_ROBLOX_PATHS;
+    id: string;
+    slug: string[];
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default function DynamicRoute({ params, searchParams }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -19,7 +29,7 @@ export default function DynamicRoute({ params }: { params: { type: string; id: s
   useEffect(() => {
     const validateAndRedirect = async () => {
       const { type, id } = params;
-      const validationType = VALID_ROBLOX_PATHS[type as keyof typeof VALID_ROBLOX_PATHS];
+      const validationType = VALID_ROBLOX_PATHS[type];
 
       if (!validationType || !validationType.test(id)) {
         toast({
@@ -33,12 +43,17 @@ export default function DynamicRoute({ params }: { params: { type: string; id: s
 
       try {
         const response = await fetch(`${API_BASE_URL}/${type}/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch');
-        }
-        const data = await response.json();
-        window.location.href = data.url;
+        if (!response.ok) throw new Error('Failed to fetch');
+        
+        const html = await response.text();
+        const metaTags = parseMetaTags(html);
+        updateMetaTags(metaTags);
+        
+        setTimeout(() => {
+          window.location.href = `https://www.roblox.com/${type}/${id}`;
+        }, 500);
       } catch (error) {
+        console.error(error);
         toast({
           variant: "destructive",
           title: "Error",
