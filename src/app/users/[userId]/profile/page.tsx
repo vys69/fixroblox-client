@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
-import Head from 'next/head';
 
 interface MetaTags {
   title: string;
@@ -48,6 +47,7 @@ export default function UserProfilePage({ params }: { params: { userId: string }
           window.location.href = `https://www.roblox.com/users/${params.userId}/profile`;
         }, 500);
       } catch (error) {
+        console.error(error);
         toast({
           variant: "destructive",
           title: "Error",

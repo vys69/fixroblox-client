@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster";
-import { Moon, MoonIcon, Sun, Clipboard, ClipboardCopy, Trash } from "lucide-react"
+import { Moon, Sun, Clipboard, Trash } from "lucide-react"
 import { useTheme } from "next-themes"
 import {
   DropdownMenu,
@@ -71,6 +71,7 @@ export default function Home() {
       }
     } catch (error) {
       setConvertedUrl('');
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -108,6 +109,7 @@ export default function Home() {
         description: "URL copied to clipboard",
       });
     } catch (err) {
+      console.error(err);
       toast({
         variant: "destructive",
         title: "Error",
